@@ -1,34 +1,20 @@
-def quickshot(left,right,num):
-    if(left>right):
-        return
-    temp=num[left]
-    i=left
-    j=right
-    while(i!=j):
-        while(num[j]>=temp and j>i):
-            j=j-1
-        while(num[i]<=temp and i<j):
-            i=i+1
-        if(i<j):
-            a=num[j]
-            num[j]=num[i]
-            num[i]=a
-            del a
-    num[left]=num[i]
-    num[i]=temp
-    quickshot(left,i-1,num)
-    quickshot(i+1,right,num)
-    return
-
 def main():
-    value={}
+    value=[]
+    key=[]
+    count=0
+    index={}
     file=open("text.txt","rb")
     data_origin=str(file.read().hex("-")).split("-")
-    for i in data_origin:
-        if(not(str(i) in value)):
-            value[str(i)]=0
-        value[str(i)]+=1
+    for hex0 in data_origin:
+        if(not(hex0 in value)):
+            value.append(hex0)
+            key.append(0)
+            index[hex0]=count
+            count=count+1
+        key[index[hex0]]+=1
+        
+    print(index)
     print(value)
-    file.close()
+    print(key)
 
 main()
