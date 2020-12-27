@@ -52,6 +52,7 @@ def main():
     del keys,value
 
     #生成huffman树
+    huffman_array_origin=huffman_array[:]
     huffman_tree=[]
     index=3
     for i in range(3):
@@ -120,10 +121,10 @@ def main():
     huffman_tree[0]="N"        
     huffman_tree[1]=huffman_array[0][0][0]
     huffman_tree[2]=huffman_array[0][0][1]
-    del huffman_array,index,lenth
+    huffman_array=huffman_array_origin[:]
+    del huffman_array_origin,index,lenth
 
     #整理huffman树
-    print(huffman_tree)
     huffman_tree_origin=huffman_tree[:]
     huffman_tree=[0,0,0]
     def reorganize(index0,index1):
@@ -147,6 +148,44 @@ def main():
         return
     reorganize(0,0)
     del huffman_tree_origin
+
+    #进行编码
+    code_list=[]
+    code_dict={}
+    code=""
+    def dfs(index,value):
+        if(huffman_tree[index]==value):
+            return code_list
+        if(huffman_tree[index]!=value and huffman_tree[index+1]==0):
+            return
+        code_list.append("0")
+        index0=len(code_list)-1
+        a=dfs(huffman_tree[index+1],value)
+        if(a!=None):
+            return a
+        code_list[index0]="1"
+        a=dfs(huffman_tree[index+2],value)
+        if(a!=None):
+            return a
+        del code_list[index0]
     
+    for i in huffman_array:
+        i=i[0]
+        dfs(0,i)
+        for j in code_list:
+            code+=j
+        code_dict[i]=code
+        code_list=[]
+        code=""
+    del code_list,code
+
+    print(code_dict)
+
+    #写入文件
+    data=""
+    for i in original_hex_data:
+        data+=code_dict[i]
+    
+
 
 main()
