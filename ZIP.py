@@ -56,20 +56,97 @@ def main():
     index=3
     for i in range(3):
         huffman_tree.append(0)
-    if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Value"):
-        for i in range(6):
-            huffman_tree.append(0)
-        huffman_tree[index]=huffman_array[0][0]
-        index+=3
-        huffman_tree[index]=huffman_array[1][0]
-        index+=3
-        huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
-        del huffman_array[1]
-        lenth-=1
-        quicksort(0,lenth,huffman_array)
-    if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Tree"):
-        pass
-    print(huffman_array)
+    while(lenth!=0):
+        if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Value"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]=huffman_array[0][0]
+            index+=3
+            huffman_tree[index]=huffman_array[1][0]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
+
+        if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Tree"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[1][0][0]
+            huffman_tree[index+2]=huffman_array[1][0][1]
+            index+=3
+            huffman_tree[index]=huffman_array[0][0]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
+
+        if(huffman_array[0][2]=="Tree" and huffman_array[1][2]=="Value"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[0][0][0]
+            huffman_tree[index+2]=huffman_array[0][0][1]
+            index+=3
+            huffman_tree[index]=huffman_array[1][0]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
+
+        if(huffman_array[0][2]=="Tree" and huffman_array[1][2]=="Tree"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[0][0][0]
+            huffman_tree[index+2]=huffman_array[0][0][1]
+            index+=3
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[1][0][0]
+            huffman_tree[index+2]=huffman_array[1][0][1]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
+
+    huffman_tree[0]="N"        
+    huffman_tree[1]=huffman_array[0][0][0]
+    huffman_tree[2]=huffman_array[0][0][1]
+    del huffman_array,index,lenth
+
+    #整理huffman树
     print(huffman_tree)
+    huffman_tree_origin=huffman_tree[:]
+    huffman_tree=[0,0,0]
+    def reorganize(index0,index1):
+        """
+        index0:huffman_tree_origin数组的索引
+        index1:huffman_tree数组的索引
+        """
+        if(huffman_tree_origin[index0]!="N"):#如果不是是N,就代表他是一个单独的值，而不是节点
+            huffman_tree[index1]=huffman_tree_origin[index0]
+            return
+        else:#也就是N,为节点
+            huffman_tree[index1]="N"
+            for i in range(3):
+                huffman_tree.append(0)
+            huffman_tree[index1+1]=len(huffman_tree)-3
+            reorganize(huffman_tree_origin[index0+1],len(huffman_tree)-3)
+            for i in range(3):
+                huffman_tree.append(0)
+                huffman_tree[index1+2]=len(huffman_tree)-3
+            reorganize(huffman_tree_origin[index0+2],len(huffman_tree)-3)
+        return
+    reorganize(0,0)
+    del huffman_tree_origin
+    
 
 main()
