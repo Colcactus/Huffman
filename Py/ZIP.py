@@ -58,6 +58,7 @@ def main():
     for i in range(3):
         huffman_tree.append(0)
     while(lenth!=0):
+        print(huffman_array)
         if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Value"):
             for i in range(6):
                 huffman_tree.append(0)
@@ -150,34 +151,28 @@ def main():
     del huffman_tree_origin
 
     #进行编码
-    code_list=[]
+    huffman_list=[[0,None]]
     code_dict={}
-    code=""
-    def dfs(index,value):
-        if(huffman_tree[index]==value):
-            return code_list
-        if(huffman_tree[index]!=value and huffman_tree[index+1]==0):
-            return
-        code_list.append("0")
-        index0=len(code_list)-1
-        a=dfs(huffman_tree[index+1],value)
-        if(a!=None):
-            return a
-        code_list[index0]="1"
-        a=dfs(huffman_tree[index+2],value)
-        if(a!=None):
-            return a
-        del code_list[index0]
-    
-    for i in huffman_array:
-        i=i[0]
-        dfs(0,i)
-        for j in code_list:
-            code+=j
-        code_dict[i]=code
-        code_list=[]
-        code=""
-    del code_list,code
+    count=0
+    i=0
+
+    while(len(huffman_array)!=count):
+        if(huffman_list[i][0]==0):
+            huffman_list.append([huffman_tree[1],"0"])
+            huffman_list.append([huffman_tree[2],"1"])
+            count+=1
+            i+=1
+            continue
+        if(huffman_tree[huffman_list[i][0]]=="N"):
+            huffman_list.append([huffman_tree[huffman_list[i][0]+1],huffman_list[i][1]+"0"])
+            huffman_list.append([huffman_tree[huffman_list[i][0]+2],huffman_list[i][1]+"1"])
+        else:
+            code_dict[huffman_tree[huffman_list[i][0]]]=huffman_list[i][1]
+            count+=1
+        i+=1
+
+    print(code_dict)
+    print(huffman_tree.index(huffman_tree.index(huffman_tree.index("85"))))
 
     #写入文件
     data=""
