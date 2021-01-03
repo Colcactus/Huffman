@@ -23,7 +23,7 @@ def quicksort(left,right,huffman_array):
 
 def main():
     #读取十六进制
-    file=open("Test.txt","rb")
+    file=open("Wiki-霍夫曼编码.png","rb")
     original_hex_data=str(file.read().hex("-")).split("-")
     file.close()
     
@@ -58,7 +58,6 @@ def main():
     for i in range(3):
         huffman_tree.append(0)
     while(lenth!=0):
-        print(huffman_array)
         if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Value"):
             for i in range(6):
                 huffman_tree.append(0)
@@ -66,8 +65,8 @@ def main():
             index+=3
             huffman_tree[index]=huffman_array[1][0]
             index+=3
-            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
-            del huffman_array[1]
+            huffman_array[1]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[0]
             lenth-=1
             quicksort(0,lenth,huffman_array)
             continue
@@ -75,14 +74,14 @@ def main():
         if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Tree"):
             for i in range(6):
                 huffman_tree.append(0)
+            huffman_tree[index]=huffman_array[0][0]
+            index+=3
             huffman_tree[index]="N"
             huffman_tree[index+1]=huffman_array[1][0][0]
             huffman_tree[index+2]=huffman_array[1][0][1]
             index+=3
-            huffman_tree[index]=huffman_array[0][0]
-            index+=3
-            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
-            del huffman_array[1]
+            huffman_array[1]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[0]
             lenth-=1
             quicksort(0,lenth,huffman_array)
             continue
@@ -96,8 +95,8 @@ def main():
             index+=3
             huffman_tree[index]=huffman_array[1][0]
             index+=3
-            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
-            del huffman_array[1]
+            huffman_array[1]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[0]
             lenth-=1
             quicksort(0,lenth,huffman_array)
             continue
@@ -113,8 +112,8 @@ def main():
             huffman_tree[index+1]=huffman_array[1][0][0]
             huffman_tree[index+2]=huffman_array[1][0][1]
             index+=3
-            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
-            del huffman_array[1]
+            huffman_array[1]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[0]
             lenth-=1
             quicksort(0,lenth,huffman_array)
             continue
@@ -160,7 +159,6 @@ def main():
         if(huffman_list[i][0]==0):
             huffman_list.append([huffman_tree[1],"0"])
             huffman_list.append([huffman_tree[2],"1"])
-            count+=1
             i+=1
             continue
         if(huffman_tree[huffman_list[i][0]]=="N"):
@@ -170,9 +168,6 @@ def main():
             code_dict[huffman_tree[huffman_list[i][0]]]=huffman_list[i][1]
             count+=1
         i+=1
-
-    print(code_dict)
-    print(huffman_tree.index(huffman_tree.index(huffman_tree.index("85"))))
 
     #写入文件
     data=""
