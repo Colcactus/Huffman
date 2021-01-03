@@ -1,3 +1,7 @@
+import tempfile
+from multiprocessing import Process
+
+
 def quicksort(left,right,huffman_array):
     if(left>right):
         return
@@ -23,7 +27,7 @@ def quicksort(left,right,huffman_array):
 
 def main():
     #读取十六进制
-    file=open("Wiki-霍夫曼编码.png","rb")
+    file=open("Test.txt","rb")
     original_hex_data=str(file.read().hex("-")).split("-")
     file.close()
     
@@ -170,6 +174,7 @@ def main():
         i+=1
 
     #写入文件
+    print(huffman_array)
     data=""
     data_bin=""
     data_hex=[]
