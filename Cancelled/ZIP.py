@@ -1,95 +1,194 @@
+def quicksort(left,right,huffman_array):
+    if(left>right):
+        return
+    i=left
+    j=right
+    temp=huffman_array[left][1]
+    while(i!=j):
+        while(i<j and temp<=huffman_array[j][1]):
+            j-=1
+        while(i<j and temp>=huffman_array[i][1]):
+            i+=1
+        if(i<j):
+            a=huffman_array[i]
+            huffman_array[i]=huffman_array[j]
+            huffman_array[j]=a
+            del a
+    a=huffman_array[left]
+    huffman_array[left]=huffman_array[i]
+    huffman_array[i]=a
+    del a
+    quicksort(left,i-1,huffman_array)
+    quicksort(i+1,right,huffman_array)
+
 def main():
     #读取十六进制
-    file=open("1.jpg","rb")
-    data_origin=str(file.read().hex("-")).split("-")
+    file=open("Test.txt","rb")
+    original_hex_data=str(file.read().hex("-")).split("-")
     file.close()
-    #读取出现次数
-    value={}
-    for hex0 in data_origin:
-        if(not(hex0 in value)):
-            value[hex0]=0
-        value[hex0]+=1
-    #排序(从大到小)
-    keys=[]
-    value_origin=value.copy()#备份value
-    while(len(value)):
-        temp=["",0]#temp[0]是键，temp[1]是值
-        for i in list(value):#遍历字典，寻找最大值
-            if(value[i]>temp[1]):
-                temp[0]=i
-                temp[1]=value[i]
-        keys.append(temp[0])
-        del value[temp[0]]#删除最大值
-    value=value_origin#还原value
-    del temp,value_origin
     
-    #创建huffman数组(二进制)(字符串)
-    huffman=[]
+    #统计出现次数
+    frequency={}
+    for count in original_hex_data:
+        if(not(count in frequency)):
+            frequency[count]=0
+        frequency[count]+=1
+    
+    #创建二维数组，并排序好数组，只留下huffman有序序列
+    keys=[]
+    value=[]
+    lenth=0
+    keys=list(frequency)
+    for i in keys:
+        value.append(frequency[i])
+    huffman_array=[]
     for i in range(len(keys)):
-        huffman.append(bin(i)[2:])
+        huffman_array.append([])
+        huffman_array[i].append(keys[i])
+        huffman_array[i].append(value[i])
+        huffman_array[i].append("Value")
+    quicksort(0,len(keys)-1,huffman_array)
+    lenth=len(keys)-1
+    del keys,value
 
-    #将huffman自动补全到3或7或9位
-    huffman_origin=huffman[:]
-    huffman=[]
-    for i in huffman_origin:
-        if(len(i)<=3):
-            i=i.zfill(3)
-        if(len(i)>3 and len(i)<=6):
-            i=i.zfill(6)
-        if(len(i)>6 and len(i)<=9):
-            i=i.zfill(9)
-        huffman.append(i)
-    del huffman_origin
+    #生成huffman树
+    huffman_array_origin=huffman_array[:]
+    huffman_tree=[]
+    index=3
+    for i in range(3):
+        huffman_tree.append(0)
+    while(lenth!=0):
+        if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Value"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]=huffman_array[0][0]
+            index+=3
+            huffman_tree[index]=huffman_array[1][0]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
 
-    #将huffman数组的顺序调回
-    huffman_origin=huffman[:]
-    huffman=[]
-    for i in list(value):
-        huffman.append((huffman_origin[keys.index(i)]))
-    del keys,huffman_origin
+        if(huffman_array[0][2]=="Value" and huffman_array[1][2]=="Tree"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[1][0][0]
+            huffman_tree[index+2]=huffman_array[1][0][1]
+            index+=3
+            huffman_tree[index]=huffman_array[0][0]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
 
-    #根据文件，创建编码完成字符串
-    data=[]
-    data_bin=""
-    for i in data_origin:
-        data.append(huffman[list(value).index(i)])#将原十六进制数据替换成Huffman编码完成的数据
-    for i in data:
-        if(len(i)==3):
-            data_bin+=("1"+i)
-        if(len(i)==6):
-            data_bin+=("1"+i[:3])+("0"+i[3:6])
-        if(len(i)==9):
-            data_bin+=("1"+i[:3])+("0"+i[3:6])+("0"+i[6:9])
-    del data
+        if(huffman_array[0][2]=="Tree" and huffman_array[1][2]=="Value"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[0][0][0]
+            huffman_tree[index+2]=huffman_array[0][0][1]
+            index+=3
+            huffman_tree[index]=huffman_array[1][0]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
 
-    #创建编码对照表
-    com_table={}
-    for i in range(len(huffman)):
-        com_table[huffman[i]]=list(value)[i]
+        if(huffman_array[0][2]=="Tree" and huffman_array[1][2]=="Tree"):
+            for i in range(6):
+                huffman_tree.append(0)
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[0][0][0]
+            huffman_tree[index+2]=huffman_array[0][0][1]
+            index+=3
+            huffman_tree[index]="N"
+            huffman_tree[index+1]=huffman_array[1][0][0]
+            huffman_tree[index+2]=huffman_array[1][0][1]
+            index+=3
+            huffman_array[0]=[[index-6,index-3],huffman_array[0][1]+huffman_array[1][1],"Tree"]
+            del huffman_array[1]
+            lenth-=1
+            quicksort(0,lenth,huffman_array)
+            continue
 
-    #转换为bytes对象
-    data_file_hex=""
-    data_file=[]
-    mode=0
-    for i in list(data_bin):
-        data_file_hex+=i
-        if(len(data_file_hex)==8):
-            data_file.append(bytes.fromhex(hex(int(data_file_hex,2))[2:].zfill(2)))
-            data_file_hex=""
-    if(len(data_file_hex)==4):
-        data_file_hex=data_file_hex+"0000"
-        data_file.append(bytes.fromhex(hex(int(data_file_hex,2))[2:]))
-        mode=1
-    del data_file_hex
+    huffman_tree[0]="N"        
+    huffman_tree[1]=huffman_array[0][0][0]
+    huffman_tree[2]=huffman_array[0][0][1]
+    huffman_array=huffman_array_origin[:]
+    del huffman_array_origin,index,lenth
 
-    #大量删除，释放内存，只留下编码后文件数据、编码对照表、单双文件区分位
-    del data_bin,huffman,value,data_origin
+    #整理huffman树
+    huffman_tree_origin=huffman_tree[:]
+    huffman_tree=[0,0,0]
+    def reorganize(index0,index1):
+        """
+        index0:huffman_tree_origin数组的索引
+        index1:huffman_tree数组的索引
+        """
+        if(huffman_tree_origin[index0]!="N"):#如果不是是N,就代表他是一个单独的值，而不是节点
+            huffman_tree[index1]=huffman_tree_origin[index0]
+            return
+        else:#也就是N,为节点
+            huffman_tree[index1]="N"
+            for i in range(3):
+                huffman_tree.append(0)
+            huffman_tree[index1+1]=len(huffman_tree)-3
+            reorganize(huffman_tree_origin[index0+1],len(huffman_tree)-3)
+            for i in range(3):
+                huffman_tree.append(0)
+                huffman_tree[index1+2]=len(huffman_tree)-3
+            reorganize(huffman_tree_origin[index0+2],len(huffman_tree)-3)
+        return
+    reorganize(0,0)
+    del huffman_tree_origin
+
+    #进行编码
+    huffman_list=[[0,None]]
+    code_dict={}
+    count=0
+    i=0
+
+    while(len(huffman_array)!=count):
+        if(huffman_list[i][0]==0):
+            huffman_list.append([huffman_tree[1],"0"])
+            huffman_list.append([huffman_tree[2],"1"])
+            count+=1
+            i+=1
+            continue
+        if(huffman_tree[huffman_list[i][0]]=="N"):
+            huffman_list.append([huffman_tree[huffman_list[i][0]+1],huffman_list[i][1]+"0"])
+            huffman_list.append([huffman_tree[huffman_list[i][0]+2],huffman_list[i][1]+"1"])
+        else:
+            code_dict[huffman_tree[huffman_list[i][0]]]=huffman_list[i][1]
+            count+=1
+        i+=1
 
     #写入文件
-    file=open("huffman.txt","wb")
-    for i in data_file:
+    data=""
+    data_bin=""
+    data_hex=[]
+    for i in original_hex_data:
+        data+=code_dict[i]
+    for i in list(data):
+        data_bin+=i
+        if(len(data_bin)==8):
+            data_hex.append(bytes.fromhex(hex(int(data_bin,2))[2:].zfill(2)))
+            data_bin=""
+    if(len(data_bin)!=0):
+        while(len(data_bin)!=8):
+            data_bin+="0"
+        data_hex.append(bytes.fromhex(hex(int(data_bin,2))[2:].zfill(2)))
+
+    file=open("huffman.bin","wb")
+    for i in data_hex:
         file.write(i)
     file.close()
     
-
 main()
