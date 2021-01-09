@@ -25,12 +25,7 @@ def quicksort(left,right,huffman_array):
     quicksort(left,i-1,huffman_array)
     quicksort(i+1,right,huffman_array)
 
-def main():
-    #读取十六进制
-    file=open("Test.txt","rb")
-    original_hex_data=str(file.read().hex("-")).split("-")
-    file.close()
-    
+def huffman(original_hex_data):
     #统计出现次数
     frequency={}
     for count in original_hex_data:
@@ -172,9 +167,9 @@ def main():
             code_dict[huffman_tree[huffman_list[i][0]]]=huffman_list[i][1]
             count+=1
         i+=1
+    del count,i,huffman_list
 
     #写入文件
-    print(huffman_array)
     data=""
     data_bin=""
     data_hex=[]
@@ -190,9 +185,28 @@ def main():
             data_bin+="0"
         data_hex.append(bytes.fromhex(hex(int(data_bin,2))[2:].zfill(2)))
 
-    file=open("huffman.bin","wb")
-    for i in data_hex:
-        file.write(i)
-    file.close()
+    with tempfile.TemporaryFile() as file:  
+        for i in data_hex:
+            file.write(i)
     
-main()
+    del huffman_tree,code_dict,data,data_bin,data_hex,frequency
+
+    #写入对照表
+    contrast=""
+    #前8位控制字符
+    #0.12位总控(1启用，0停用)
+    if(huffman_array[-1][1]>128):
+        contrast+="1"
+    else:
+        contrast+="0"
+    print(contrast)
+    
+
+
+if __name__=="__main__":
+    file=open("Test.txt","rb")
+    original_hex_data=str(file.read().hex("-")).split("-")
+    file.close()
+    for i in range(1):    
+        p=Process(target=huffman,args=(original_hex_data[:1024],))
+        p.start()
