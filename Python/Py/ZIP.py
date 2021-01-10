@@ -213,10 +213,24 @@ def huffman(original_hex_data):
     #字节频率对写入
     if(mode==1 and compare[1]=="0"):#查询总控(12位关闭)
         for i in huffman_array:
-            print(bin(int(i[0],16))[2:].zfill(8))
-            print(bin(i[1])[2:].zfill(8))
-    if(mode==1 and compare[1]=="1"):#查询总控(12位开启)
-        pass
+            compare+=bin(int(i[0],16))[2:].zfill(8)
+            compare+=bin(i[1])[2:].zfill(8)
+    if(mode==1 and compare[1]=="1"):#查询总控(12位开启)(0为8位，1为12位)
+        huffman_array_128=huffman_array[:]
+        for i in huffman_array:
+            if(i[1]>128):
+                break
+            compare+=bin(int(i[0],16))[2:].zfill(8)
+            compare+="0"
+            compare+=bin(i[1])[2:].zfill(8)
+            del huffman_array_128[0]
+        for i in huffman_array_128:
+            compare+=bin(int(i[0],16))[2:].zfill(8)
+            compare+="1"
+            compare+=bin(i[1])[2:].zfill(12)
+        del huffman_array_128
+
+
     print(compare)
 
 if __name__=="__main__":
