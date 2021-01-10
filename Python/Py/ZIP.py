@@ -185,23 +185,39 @@ def huffman(original_hex_data):
             data_bin+="0"
         data_hex.append(bytes.fromhex(hex(int(data_bin,2))[2:].zfill(2)))
 
-    with tempfile.TemporaryFile() as file:  
+    with tempfile.TemporaryFile() as file0:  
         for i in data_hex:
-            file.write(i)
+            file0.write(i)
     
     del huffman_tree,code_dict,data,data_bin,data_hex,frequency
 
     #写入对照表
-    contrast=""
+    compare=""
+    mode=1
     #前8位控制字符
-    #0.12位总控(1启用，0停用)
-    if(huffman_array[-1][1]>128):
-        contrast+="1"
+    #0~1.多位总控(与固实块有关)(有待增加)(目前按照1KB写入)
+    #00:12位关闭
+    #01:12位开启
+    if(huffman_array[-1][1]>128 and mode==1):
+        compare+="01"
     else:
-        contrast+="0"
-    print(contrast)
-    
-
+        compare+="00"
+    #2~4.固实块大小
+    #0000:无固实
+    #0001:1KB固实
+    compare+=bin(mode)[2:].zfill(4) 
+    #6~7:备用
+    compare+="000"
+    #16位地址(留白)
+    compare+="0"*16
+    #字节频率对写入
+    if(mode==1 and compare[1]=="0"):#查询总控(12位关闭)
+        for i in huffman_array:
+            print(bin(int(i[0],16))[2:].zfill(8))
+            print(bin(i[1])[2:].zfill(8))
+    if(mode==1 and compare[1]=="1"):#查询总控(12位开启)
+        pass
+    print(compare)
 
 if __name__=="__main__":
     file=open("Test.txt","rb")
