@@ -189,48 +189,16 @@ def huffman(original_hex_data):
         for i in data_hex:
             file0.write(i)
     
-    del huffman_tree,code_dict,data,data_bin,data_hex,frequency
+    del huffman_tree,data,data_bin,data_hex,frequency,huffman_array
 
     #写入对照表
-    compare=""
-    mode=1
-    #前8位控制字符
-    #0~1.多位总控(与固实块有关)(有待增加)(目前按照1KB写入)
-    #00:12位关闭
-    #01:12位开启
-    if(huffman_array[-1][1]>128 and mode==1):
-        compare+="01"
-    else:
-        compare+="00"
-    #2~4.固实块大小
-    #0000:无固实
-    #0001:1KB固实
-    compare+=bin(mode)[2:].zfill(4) 
-    #6~7:备用
-    compare+="000"
-    #16位地址(留白)
-    compare+="0"*16
-    #字节频率对写入
-    if(mode==1 and compare[1]=="0"):#查询总控(12位关闭)
-        for i in huffman_array:
-            compare+=bin(int(i[0],16))[2:].zfill(8)
-            compare+=bin(i[1])[2:].zfill(8)
-    if(mode==1 and compare[1]=="1"):#查询总控(12位开启)(0为8位，1为12位)
-        huffman_array_128=huffman_array[:]
-        for i in huffman_array:
-            if(i[1]>128):
-                break
-            compare+=bin(int(i[0],16))[2:].zfill(8)
-            compare+="0"
-            compare+=bin(i[1])[2:].zfill(8)
-            del huffman_array_128[0]
-        for i in huffman_array_128:
-            compare+=bin(int(i[0],16))[2:].zfill(8)
-            compare+="1"
-            compare+=bin(i[1])[2:].zfill(12)
-        del huffman_array_128
-
-
+    #主体：8位原字节+不定长度编码
+    #控制：8位长度+16位地址
+    lenth=len(list(code_dict.values())[-1])
+    compare=str(bin(lenth)[2:].zfill(8))+"0"*16
+    for i in list(code_dict):
+        compare+=bin(int(i,16))[2:].zfill(8)
+        compare+=code_dict[i].ljust(lenth,"0")
     print(compare)
 
 if __name__=="__main__":
