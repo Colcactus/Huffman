@@ -9,15 +9,6 @@ import java.util.*;
 final public class HuffmanCode {
     final private static int DICT = 8;
 
-    // 试
-    public static void main(String[] args) {
-        try {
-            zipFile("/home/luoshilv/Git/HuffmanCode.jl/src/src/test/LICENSE", "/home/luoshilv/Git/HuffmanCode.jl/src/src/test/LICENSE.ccc");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * 压缩函数
      *
@@ -59,6 +50,7 @@ final public class HuffmanCode {
         // 获取编码表
         Map<Byte, String> huffmanCodes = getCodes(tree);
         // 返回数据和编码表
+        System.out.println(zip(bytes,huffmanCodes));
         return zip(bytes, huffmanCodes);
     }
 
@@ -102,6 +94,7 @@ final public class HuffmanCode {
         for (int i = 0; i < b.length; i++) {
             b[i] = list.get(i);
         }
+        System.out.println(b);
         return b;
     }
 
@@ -159,6 +152,7 @@ final public class HuffmanCode {
             by[index] = byt;
             index++;
         }
+        System.out.println(by);
         return by;
     }
 
@@ -183,6 +177,7 @@ final public class HuffmanCode {
         }
         getCodes(tree.left, "0");
         getCodes(tree.right, "1");
+        System.out.println(huffmanCodes);
         return huffmanCodes;
     }
 
@@ -201,6 +196,7 @@ final public class HuffmanCode {
         } else {
             huffmanCodes.put(node.data, sb2.toString());
         }
+        System.out.println(sb2.toString());
     }
 
     /**
@@ -222,6 +218,7 @@ final public class HuffmanCode {
             nodes.remove(right);
             nodes.add(parent);
         }
+        System.out.println(nodes.get(0));
         return nodes.get(0);
     }
 
@@ -243,6 +240,7 @@ final public class HuffmanCode {
             for (Map.Entry<Byte, Integer> entry : counts.entrySet()) {
                 nodes.add(new Node(entry.getKey(), entry.getValue()));
             }
+            System.out.println(nodes.toString());
         }
         return nodes;
     }

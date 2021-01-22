@@ -1,5 +1,8 @@
 package demo;
 
+/**
+ * @author hattoemi
+ */
 public class Node implements Comparable<Node>{
     int weight;
     byte data;
