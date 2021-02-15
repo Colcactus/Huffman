@@ -7,6 +7,7 @@ import java.util.*;
  * @author luoshilv
  */
 final public class HuffmanCode {
+    // ciao
     final private static int DICT = 8;
 
     /**

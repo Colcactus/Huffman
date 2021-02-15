@@ -9,7 +9,6 @@
 import java.io.*;
 import java.util.Arrays;
 
-
 /**
  * Compression application using adaptive Huffman coding.
  * <p>Usage: java AdaptiveHuffmanCompress InputFile OutputFile</p>

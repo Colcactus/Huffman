@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
-
 /**
  * A stream where bits can be written to. Because they are written to an underlying
  * byte stream, the end of the stream is padded with 0's up to a multiple of 8 bits.
